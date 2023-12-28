@@ -2,8 +2,8 @@ Vision Language to Action: Simple Practise
 
 ## DoAsISay
 This is tiny demo for Vision Language to Action learning dubbed DoAsISay.
-- Obtain formated solutions/plans (e.g., pick {} place {}) from user input (avaible for long-horizon tasks, e.g., move all the red boxes to the corner) through **LLM**
-- Make environment step using **Cliport**
+1. Obtain formatted solutions/plans (e.g., pick {} place {}) from user input (avaible for long-horizon tasks, e.g., move all the red boxes to the corner) through **LLM**
+2. Make environment step using **Cliport**
 
 ## setup
 **Install Anaconda or Miniconda** first, and then use conda 
