@@ -64,7 +64,7 @@ def execute_action():
 	env.reset(config)
 	action = generate_fake_action()
 	env.step(action)
-	output_cached_video(env, out_path='outputs/my_video.mp4')
+	output_cached_video(env, out_name='my_video')
 
 
 

@@ -33,9 +33,11 @@ def get_pretrained_optim():
     init_params = TransporterNets().init(key, init_img, init_text, init_pix)['params']
     optim = flax.optim.Adam(learning_rate=1e-4).create(init_params)
     # restore checkpoints
-    ckpt_path = f'ckpt_{40000}'
+    ckpt_path = f'checkpoints/ckpt_{40000}'
+    dirname = os.path.dirname(ckpt_path)
     if not os.path.exists(ckpt_path):
-        gdown.download(url=CLIPORT_CKPT_URL)
+        not os.path.exists(dirname) and os.makedirs(dirname)
+        gdown.download(url=CLIPORT_CKPT_URL, output=ckpt_path)
     optim = checkpoints.restore_checkpoint(ckpt_path, optim)
     return optim
 
@@ -43,4 +45,8 @@ if __name__ == "__main__":
     # import optax
     # print(optax.adam)
     optim = get_pretrained_optim()
+    # ckpt_path = f'folder1/checkpoints/ckpt_{40000}'
+    # print('dirname: ', os.path.dirname(ckpt_path)) # folder1/checkpoints
+    # print('base_name: ', os.path.basename(ckpt_path)) # ckpt_40000
+
     
