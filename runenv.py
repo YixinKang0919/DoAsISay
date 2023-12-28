@@ -7,9 +7,11 @@ import pybullet
 from PickPlaceEnv import env
 import matplotlib.pyplot as plt
 # import moviepy
-from moviepy.editor import ImageSequenceClip
+# from moviepy.editor import ImageSequenceClip
 from PIL import Image
 import utils
+from utils import output_cached_video
+
 
 # make sure the resource is ready
 utils.try_load_all_assets()
@@ -62,16 +64,8 @@ def execute_action():
 	env.reset(config)
 	action = generate_fake_action()
 	env.step(action)
-	output_cached_video()
+	output_cached_video(env, out_path='outputs/my_video.mp4')
 
-
-def output_cached_video():
-	if not env.cache_video:
-		print('No cached video, abort...')
-	debug_clip = ImageSequenceClip(env.cache_video, fps=25)
-	debug_clip.write_videofile('outputs/my_video.mp4')
-	# clear cache
-	env.cache_video = []
 
 
 if __name__ == "__main__":

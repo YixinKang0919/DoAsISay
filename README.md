@@ -2,13 +2,15 @@ Vision Language to Action: Simple Practise
 
 ## DoAsISay
 This is tiny demo for Vision Language to Action learning dubbed DoAsISay.
+- Obtain formated solutions/plans (e.g., pick {} place {}) from user input (avaible for long-horizon tasks, e.g., move all the red boxes to the corner) through **LLM**
+- Make environment step using **Cliport**
 
 ## setup
 **Install Anaconda or Miniconda** first, and then use conda 
 to manage your python env 
 ### conda env
 ```
-conda create -n doasisay python=3.8
+conda create -n doasisay python=3.9
 conda activate doasisay
 ```
 
@@ -27,9 +29,28 @@ pip install moviepy
 
 # vision language to action
 pip install git+https://github.com/openai/CLIP.git
-pip install jedi
 pip install flax==0.5.3
-pip install easydict
+pip install tensorflow
+# pip install easydict
+```
+
+#### Modification
+
+Current workaround for lib confliction
+
+```
+# ===pz notes start===
+# 1. flax/linen/linear.py
+# from jax import ShapedArray
+from jax.core import ShapedArray as ShapeArray
+# 2. flax/training/checkpoints.py
+# from jax.experimental.gda_serialization.serialization import get_tensorstore_spec
+# from jax.experimental.gda_serialization.serialization import GlobalAsyncCheckpointManager
+# from jax.experimental.global_device_array import GlobalDeviceArray
+from jax.experimental.array_serialization.serialization import get_tensorstore_spec
+from jax.experimental.array_serialization.serialization import GlobalAsyncCheckpointManager
+from jax import Array as GlobalDeviceArray
+# pz notes end
 ```
 
 

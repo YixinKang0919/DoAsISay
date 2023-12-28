@@ -363,6 +363,7 @@ class PickPlaceEnv:
 		done = False
 		info = {}
 		return observation, reward, done, info
+	
 	def servoj(self, joints):
 		"""
 		move to target positions with position control

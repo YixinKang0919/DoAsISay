@@ -6,6 +6,16 @@ import zipfile
 
 import gdown
 import const
+from moviepy.editor import ImageSequenceClip
+
+
+def output_cached_video(env, out_path='outputs/my_video.mp4'):
+	if not env.cache_video:
+		print('No cached video, abort...')
+	debug_clip = ImageSequenceClip(env.cache_video, fps=25)
+	debug_clip.write_videofile(out_path)
+	# clear cache
+	env.cache_video = []
 
 
 def try_load_all_assets():
