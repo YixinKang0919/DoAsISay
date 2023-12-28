@@ -2,8 +2,12 @@ Vision Language to Action: Simple Practise
 
 ## DoAsISay
 This is tiny demo for Vision Language to Action learning dubbed DoAsISay.
+Generate plan/make decision with the help of LLM (understanding high-level language instructions from user input), and then obtain low-level pick/place position through Cliport. Specifically, the 
+overall pipeline can be summarized as follows:
+
 1. Obtain formatted solutions/plans (e.g., pick {} place {}) from user input (avaible for long-horizon tasks, e.g., move all the red boxes to the corner) through **LLM**
-2. Make environment step using **Cliport**
+2. Infer pick/place position using **Cliport**
+3. Make environment step
 
 ## setup
 **Install Anaconda or Miniconda** first, and then use conda 
