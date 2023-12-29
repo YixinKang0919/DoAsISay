@@ -7,6 +7,15 @@ import zipfile
 import gdown
 import const
 from moviepy.editor import ImageSequenceClip
+import clip
+import numpy as np
+
+def step_to_nlp(step):
+	step = step.replace('robot.pick_and_place(', '')
+	step = step.replace(')', '')
+	pick, place = step.split(',')
+	return f'Pick the {pick} and place it on the {place}.'
+
 
 def make_options(pick_targets, place_targets, options_in_api_form=True, termitation_string='done()'):
 	"""generate all possible options given pick and place targets in the environments"""
@@ -19,6 +28,19 @@ def make_options(pick_targets, place_targets, options_in_api_form=True, termitat
 
 	print(f'Considering {len(options)} options')
 	return options
+
+
+def get_pretrained_clip():
+    clip_model, _ = clip.load('ViT-B/32')
+    clip_model.eval() # or clip_model.cuda().eval() if cuda is available
+    return clip_model
+
+
+def get_coords():
+    # Coordinate map (i.e. position encoding).
+    coord_x, coord_y = np.meshgrid(np.linspace(-1, 1, 224), np.linspace(-1, 1, 224), sparse=False, indexing='ij')
+    coords = np.concatenate((coord_x[..., None], coord_y[..., None]), axis=2)
+    return coords
 
 
 def output_cached_video(env, out_name='my_video'):
@@ -43,5 +65,8 @@ def try_load_all_assets():
 
 
 if __name__ == "__main__":
-	try_load_all_assets()
+	step = 'robot.pick_and_place(blue block,middle)'
+	nlp_step = step_to_nlp(step)
+	
+	# try_load_all_assets()
 	

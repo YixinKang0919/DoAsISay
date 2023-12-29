@@ -12,7 +12,7 @@ from flax.training import checkpoints
 import jax
 import jax.numpy as jnp
 # import optax
-from TransporterNets import TransporterNets
+from Cliport.TransporterNets import TransporterNets
 import os
 import gdown
 
@@ -24,6 +24,9 @@ def eval_step(params, batch):
     pick_logits, place_logits = TransporterNets().apply({'params': params}, batch['img'], batch['text'])
     return pick_logits, place_logits
 
+def n_params(params):
+  return jnp.sum(jnp.int32([n_params(v) if isinstance(v, dict) or isinstance(v, flax.core.frozen_dict.FrozenDict) else np.prod(v.shape) for v in params.values()]))
+
 def get_pretrained_optim():
     rng = jax.random.PRNGKey(0)
     rng, key = jax.random.split(rng)
@@ -32,6 +35,7 @@ def get_pretrained_optim():
     init_pix = jnp.zeros((4, 2), np.int32)
     init_params = TransporterNets().init(key, init_img, init_text, init_pix)['params']
     optim = flax.optim.Adam(learning_rate=1e-4).create(init_params)
+    print(f'Cliport Model parameters: {n_params(init_params):,}')
     # restore checkpoints
     ckpt_path = f'checkpoints/ckpt_{40000}'
     dirname = os.path.dirname(ckpt_path)

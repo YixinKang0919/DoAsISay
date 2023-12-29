@@ -46,6 +46,7 @@ class ResNet(nn.Module):
 
     def setup(self):
         self.dense0 = nn.Dense(8)
+
         self.conv0 = nn.Conv(64, (3, 3), (1, 1))
         self.block0 = ResNetBlock(64)
         self.block1 = ResNetBlock(64)
@@ -67,7 +68,7 @@ class ResNet(nn.Module):
         self.upsample2 = Upsample()
         self.block14 = ResNetBlock(16)
         self.block15 = ResNetBlock(16)
-        self.conv1 = nn.Conv(self.out_dim, (3, 3))
+        self.conv1 = nn.Conv(self.out_dim, (3, 3), (1, 1))
 
     def __call__(self, x, text):
         x = self.conv0(x)

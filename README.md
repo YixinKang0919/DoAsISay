@@ -35,6 +35,7 @@ pip install moviepy
 pip install git+https://github.com/openai/CLIP.git
 pip install flax==0.5.3
 pip install tensorflow
+pip install openai==0.28
 # pip install easydict
 ```
 
