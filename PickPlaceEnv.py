@@ -269,32 +269,33 @@ class PickPlaceEnv:
 		heightmap = np.zeros((height, width), dtype=np.float32)
 		colormap = np.zeros((height, width, colors.shape[-1]), dtype=np.uint8)
 		xyzmap = np.zeros((height, width, 3), dtype=np.float32)
-		# filter out 3D points that are outside of the predifined bounds
+
+		# Filter out 3D points that are outside of the predefined bounds.
 		ix = (points[Ellipsis, 0] >= bounds[0, 0]) & (points[Ellipsis, 0] < bounds[0, 1])
 		iy = (points[Ellipsis, 1] >= bounds[1, 0]) & (points[Ellipsis, 1] < bounds[1, 1])
 		iz = (points[Ellipsis, 2] >= bounds[2, 0]) & (points[Ellipsis, 2] < bounds[2, 1])
 		valid = ix & iy & iz
 		points = points[valid]
 		colors = colors[valid]
-		# sort 3D points by z-value, which works with array assignment to simulate
-		# z-buffering for rendering the heightmap image
+		# Sort 3D points by z-value, which works with array assignment to simulate
+		# z-buffering for rendering the heightmap image.
 		iz = np.argsort(points[:, -1])
-		points, color = points[iz], colors[iz]
-		px = np.int32(np.floor((points[:, 0]) - bounds[0, 0]) / pixel_size)
-		py = np.int32(np.floor((points[:, 1]) - bounds[1, 0]) / pixel_size)
+		points, colors = points[iz], colors[iz]
+		px = np.int32(np.floor((points[:, 0] - bounds[0, 0]) / pixel_size))
+		py = np.int32(np.floor((points[:, 1] - bounds[1, 0]) / pixel_size))
 		px = np.clip(px, 0, width - 1)
 		py = np.clip(py, 0, height - 1)
-		heightmap[px, py] = points[:, 2] - bounds[2, 0]
+		heightmap[py, px] = points[:, 2] - bounds[2, 0]
 		for c in range(colors.shape[-1]):
 			colormap[py, px, c] = colors[:, c]
 			xyzmap[py, px, c] = points[:, c]
-		colormap = colormap[::-1, :, :]  # flip up-down
+		colormap = colormap[::-1, :, :]  # Flip up-down.
 		xv, yv = np.meshgrid(np.linspace(BOUNDS[0, 0], BOUNDS[0, 1], height),
-							 np.linspace(BOUNDS[1, 0], BOUNDS[1, 1], width))
+							np.linspace(BOUNDS[1, 0], BOUNDS[1, 1], width))
 		xyzmap[:, :, 0] = xv
 		xyzmap[:, :, 1] = yv
-		xyzmap = xyzmap[::-1, :, :]  # flip up-down
-		heightmap = heightmap[::-1, :] # flip up-down
+		xyzmap = xyzmap[::-1, :, :]  # Flip up-down.
+		heightmap = heightmap[::-1, :]  # Flip up-down.
 		return heightmap, colormap, xyzmap
 
 	def get_reward(self): # TODO
