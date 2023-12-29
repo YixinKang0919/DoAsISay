@@ -5,7 +5,7 @@ This is tiny demo for Vision Language to Action learning dubbed DoAsISay.
 Generate plan/make decision with the help of LLM (understanding high-level language instructions from user input), and then obtain low-level pick/place position through Cliport. Specifically, the 
 overall pipeline can be summarized as follows:
 
-1. Obtain formatted solutions/plans (e.g., pick {} place {}) from user input (avaible for long-horizon tasks, e.g., move all the red boxes to the corner) through **LLM**
+1. Obtain formatted solutions/plans (e.g., pick {} place {}) from user input (suitable for long-horizon tasks, e.g., move all the red boxes to the corner) through **LLM**
 2. Infer pick/place position using **Cliport**
 3. Make environment step
 
@@ -57,6 +57,10 @@ from jax.experimental.array_serialization.serialization import GlobalAsyncCheckp
 from jax import Array as GlobalDeviceArray
 # pz notes end
 ```
+
+## Instructions
+- Modify `Configs.py` and run `Runner.py` 
+- Try add more objects to the environment and flesh out `LLM/PromptEngineering.py`
 
 
 
