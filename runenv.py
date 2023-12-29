@@ -69,6 +69,6 @@ def execute_action():
 
 
 if __name__ == "__main__":
-	show_img_top()
-	# show_init_setting(image_size=(640, 640))
+	# show_img_top()
+	show_init_setting()
 	# execute_action()

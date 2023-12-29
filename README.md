@@ -8,6 +8,7 @@ overall pipeline can be summarized as follows:
 1. Obtain formatted solutions/plans (e.g., pick {} place {}) from user input (suitable for long-horizon tasks, e.g., move all the red boxes to the corner) through **LLM**
 2. Infer pick/place position using **Cliport**
 3. Make environment step
+![](VisionLanguageToAction.png)
 
 ## setup
 **Install Anaconda or Miniconda** first, and then use conda 
