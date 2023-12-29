@@ -18,6 +18,11 @@ objects = [yellow block, blue block, red block]
 robot.pick_and_place(yellow block, middle)
 done()
 
+objects = [yellow block, blue block, red block, blue bowl]
+# move the light colored block to the bowl.
+robot.pick_and_place(yellow block, blue bowl)
+done()
+
 objects = [blue block, green bowl, red block, yellow bowl, green block]
 # stack the blocks.
 robot.pick_and_place(green block, blue block)

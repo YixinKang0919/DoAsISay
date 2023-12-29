@@ -16,17 +16,16 @@ from utils import make_options, output_cached_video, get_pretrained_clip, get_co
 from const import PICK_TARGETS, PLACE_TARGETS
 from LLM.PromptEngineering import TERMINATION_STRING, GPT3_CONTEXT
 from LLM.LLMScoring import gpt3_scoring
-from Configs import LLM_ENGINE, ENV_CONF, RAW_INPUT
+from Configs import LLM_ENGINE, ENV_CONF, RAW_INPUT, MAX_TASKS, MAX_OPTIONS, RPM
 from PickPlaceEnv import env
 import time
 
 import openai
-openai.api_key = "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"
+openai.api_key = "PUT YOUR API KEY HERE"
 
 # make sure the resource is ready
 utils.try_load_all_assets()
 
-MAX_TASKS = 3
 
 
 def run():
@@ -36,8 +35,7 @@ def run():
     _place_targets = {k: None for k in ENV_CONF['place'] if k not in PLACE_TARGETS}
     _place_targets.update(PLACE_TARGETS)
     options = make_options(_pick_targets, _place_targets, termitation_string=TERMINATION_STRING)
-    # TODO test
-    options = options[:20] 
+    options = options[:MAX_OPTIONS] 
     gpt3_prompt = GPT3_CONTEXT + '\n' + RAW_INPUT + '\n'
     selected_task = ''
     num_tasks = 0
@@ -47,7 +45,7 @@ def run():
         num_tasks += 1
         if num_tasks > MAX_TASKS:
             break
-        time.sleep(20)  # because of the RPM
+        time.sleep(60//RPM)  # because of the RPM
         llm_scores, _ = gpt3_scoring(gpt3_prompt, options, verbose=True, engine=LLM_ENGINE)
         scores = {option: np.exp(llm_scores[option]) for option in options}
         selected_task = max(scores, key=scores.get)
@@ -86,26 +84,19 @@ def run_cliport(obs, text):
     batch = {'img': jnp.float32(img), 'text': jnp.float32(text_feats)}
     optim = get_pretrained_optim()
     pick_map, place_map = eval_step(optim.target, batch)
-    print('pick map: ', pick_map)
-    print('===')
     pick_map, place_map = np.float32(pick_map), np.float32(place_map)
 
     # get pick position
     pick_max = np.argmax(np.float32(pick_map)).squeeze()
     pick_yx = (pick_max // 224, pick_max % 224) # (row, col)
     pick_yx = np.clip(pick_yx, 20, 204)
-    # pick_yx = [44, 94] 
     pick_xyz = obs['xyzmap'][pick_yx[0], pick_yx[1]]
 
     # get place position
     place_max = np.argmax(np.float32(place_map)).squeeze()
     place_yx = (place_max // 224, place_max % 224)
     place_yx = np.clip(place_yx, 20, 204)
-    # place_yx = [155, 153]
     place_xyz = obs['xyzmap'][place_yx[0], place_yx[1]]
-    print(f'pick xyz: {pick_xyz}, place xyz: {place_xyz}')
-    print('===')
-    print(f'pick yx: {pick_yx}, place yx: {place_yx}')
 
     # step environment
     act = {'pick': pick_xyz, 'place': place_xyz}
@@ -142,10 +133,9 @@ def run_cliport(obs, text):
 
 
 if __name__ == "__main__":
-    np.random.seed(42)
-    obs = env.reset(ENV_CONF)
-    text = 'Pick the yellow block and place it on the yellow bowl.'
-    obs = run_cliport(obs, text)
+    run()
+    # np.random.seed(42)
+    # obs = env.reset(ENV_CONF)
     # steps_text = ['robot.pick_and_place(blue block,blue bowl)']
     # nlp_step = step_to_nlp(steps_text[0])
     # print('nlp step: ', nlp_step)
@@ -153,7 +143,6 @@ if __name__ == "__main__":
     #     nlp_step = step_to_nlp(step)
     #     obs = run_cliport(obs, nlp_step)
 
-    # run()
 
     
 
