@@ -1,4 +1,4 @@
-Vision Language to Action: Simple Practise
+Vision Language to Action: Simple Practice
 
 ## DoAsISay
 This is tiny demo for Vision Language to Action learning dubbed DoAsISay.
