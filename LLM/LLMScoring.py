@@ -9,30 +9,37 @@ import openai
 
 LLM_CACHE = {}
 
+MAX_PROMPT = 20
 
 def gpt3_call(engine='text-ada-001', prompt='', max_tokens=128, temperature=0, logprobs=1, echo=False):
     full_query = ''
     for p in prompt: # prompt should be a list of str
         full_query += p
     _id = tuple((engine, full_query, max_tokens, temperature, logprobs, echo))
-    response = LLM_CACHE.get(_id)
-    if response is None:
-        response = openai.Completion.create(engine=engine, 
-                                            prompt=prompt, 
-                                            max_tokens=max_tokens,
-                                            temperature=temperature,
-                                            logprobs=logprobs,
-                                            echo=echo)
-        LLM_CACHE[_id] = response
-    return response
-    
-    # response = LLM_CACHE.get(_id, openai.Completion.create(engine=engine, 
-    #                                                        prompt=prompt, 
-    #                                                        max_tokens=max_tokens,
-    #                                                        temperature=temperature,
-    #                                                        logprobs=logprobs,
-    #                                                        echo=echo))
-    # LLM_CACHE[_id] = response
+    response_choices = LLM_CACHE.get(_id, [])
+    times = len(prompt) // MAX_PROMPT + 1  
+    if not response_choices:
+        for i in range(times):
+            sub_prompt = prompt[i*MAX_PROMPT:(i+1)*MAX_PROMPT] if (i+1)*MAX_PROMPT <= len(prompt) else prompt[i*MAX_PROMPT:]
+            response = openai.Completion.create(engine=engine, 
+                                                prompt=sub_prompt, 
+                                                max_tokens=max_tokens,
+                                                temperature=temperature,
+                                                logprobs=logprobs,
+                                                ) # echo=echo
+            response_choices.extend(response['choices'])
+        LLM_CACHE[_id] = response_choices
+    return response_choices
+        
+
+    # if response is None:
+    #     response = openai.Completion.create(engine=engine, 
+    #                                         prompt=prompt, 
+    #                                         max_tokens=max_tokens,
+    #                                         temperature=temperature,
+    #                                         logprobs=logprobs,
+    #                                         ) # echo=echo
+    #     LLM_CACHE[_id] = response
     # return response
 
 
@@ -42,13 +49,13 @@ def gpt3_scoring(query, options, engine='text-ada-001', limit_num_options: int=N
     verbose and print(f'Scoring {len(options)} options')
     gpt3_prompt_options = [query + option for option in options]
 
-    response = gpt3_call(engine=engine,
+    response_choices = gpt3_call(engine=engine,
                          prompt=gpt3_prompt_options,
                          logprobs=1,
                          temperature=0,
                          echo=True)
     scores = {}
-    for option, choice in zip(options, response['choices']):
+    for option, choice in zip(options, response_choices):
         tokens = choice['logprobs']['tokens']
         token_logprobs = choice['logprobs']['token_logprobs']
 
@@ -66,7 +73,7 @@ def gpt3_scoring(query, options, engine='text-ada-001', limit_num_options: int=N
         verbose and print(f'{option[1]}\t{option[0]}')
         if i > 10:
             break
-    return scores, response
+    return scores, response_choices
 
 
 if __name__ == "__main__":
