@@ -21,7 +21,7 @@ ENV_CONF = {'pick':  ['yellow block', 'red block', 'blue block', 'blue block'], 
           'place': ['green bowl', 'red bowl']}  # 
 
 # mimic user input
-RAW_INPUT =  'move the block to the bowl' 
+RAW_INPUT =  'move blue things into red one'
 # 'stack the blocks'
 
 # 'put the blue one to the red thing'

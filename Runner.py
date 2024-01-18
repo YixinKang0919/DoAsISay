@@ -19,10 +19,11 @@ from LLM.LLMScoring import gpt3_scoring
 from Configs import LLM_ENGINE, ENV_CONF, RAW_INPUT, MAX_TASKS, RPM
 from PickPlaceEnv import env
 import time
+import os
 
 import openai
-openai.api_key = "PUT YOUR API KEY HERE"
 
+openai.api_key = os.environ['OPENAI_API_KEY']
 # make sure the resource is ready
 utils.try_load_all_assets()
 
